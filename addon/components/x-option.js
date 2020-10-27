@@ -1,4 +1,4 @@
-import { scheduleOnce } from '@ember/runloop';
+import { scheduleOnce, schedule } from '@ember/runloop';
 import { computed } from '@ember/object';
 import Component from '@ember/component';
 import { isArray, A } from '@ember/array';
@@ -36,7 +36,7 @@ export default Component.extend({
    * @property selected
    * @type Boolean
    */
-  selected: computed('value', 'select.{value,multiple}', function() {
+  selected: computed('value', 'select.{value,multiple}', function () {
     if (this.get('select.multiple') && isArray(this.get('select.value'))) {
       let selectValue = A(this.get('select.value'));
 
@@ -80,8 +80,11 @@ export default Component.extend({
    *
    * @override
    */
-  willDestroyElement: function() {
-    this.get('unregister')(this);
+  willDestroyElement: function () {
+    schedule('actions', () => {
+      this.get('unregister')(this);
+    });
+
     this._super.apply(this, arguments);
-  }
+  },
 });
